@@ -1,0 +1,87 @@
+{
+  "schemaVersion": "1.0.0",
+  "projectStateVersion": 3,
+  "summary": "RigRewards affiliate marketing platform will be rebuilt using the Internet Computer supported stack (Motoko backend canister(s) + React/TS + Tailwind + Internet Identity). Payments will NOT be on-chain ICRC-1; instead users pay the admin via off-app bank transfer, then admin manually confirms and credits the user's internal wallet balance, which users spend on rig purchases.",
+  "architectural_notes": [
+    "Auth will use Internet Identity only (no email/password or Google OAuth).",
+    "Backend and persistence will be implemented in Motoko with canister-based storage (no PostgreSQL/Prisma).",
+    "Payments are off-app bank transfers; platform uses an internal credit balance that admins manually adjust/credit after confirmation.",
+    "Cron-like daily earnings/rewards will be implemented with IC timers."
+  ],
+  "known_issues": [],
+  "isFixRequest": false,
+  "existing_features": [
+    {
+      "id": "feature-implement-an-off-app-bank-payment-deposit-flow-where-users-pay-the-admin-outside-the-app-and-then-request-record-a-deposit-inside-the-app-for-admin-review",
+      "title": "Implement an off-app bank payment deposit flow where users pay the admin outside the app and then request/record a deposit inside the app for admin review.",
+      "reqIds": [
+        "REQ-1"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-an-admin-panel-workflow-to-confirm-bank-deposits-and-credit-user-wallets-by-a-manually-entered-amount-with-an-auditable-transaction-trail",
+      "title": "Add an admin panel workflow to confirm bank deposits and credit user wallets by a manually entered amount, with an auditable transaction trail.",
+      "reqIds": [
+        "REQ-2"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-update-rig-package-purchasing-to-use-internal-wallet-credits-available-balance-as-the-payment-method",
+      "title": "Update rig/package purchasing to use internal wallet credits (available balance) as the payment method.",
+      "reqIds": [
+        "REQ-3"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-user-facing-pages-components-for-viewing-wallet-balance-deposit-request-status-and-transaction-history-and-admin-facing-pages-components-for-deposit-review-and-approval",
+      "title": "Add user-facing pages/components for viewing wallet balance, deposit request status, and transaction history, and admin-facing pages/components for deposit review and approval.",
+      "reqIds": [
+        "REQ-5"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-apply-a-coherent-distinct-visual-theme-for-the-rigrewards-ui-colors-typography-layout-and-enforce-it-consistently-across-user-and-admin-areas",
+      "title": "Apply a coherent, distinct visual theme for the RigRewards UI (colors, typography, layout) and enforce it consistently across user and admin areas.",
+      "reqIds": [
+        "REQ-6"
+      ],
+      "version": 1
+    }
+  ],
+  "new_feature_requests": [
+    {
+      "id": "AR-1",
+      "summary": "Rebuild RigRewards on Internet Computer stack (Motoko canister backend, React+TS frontend, Internet Identity auth, canister storage, timer-based cron simulation)",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-2",
+      "summary": "Implement offline bank-transfer deposit flow: admin manually credits user internal wallet balance after payment confirmation; users spend credits to purchase rigs",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-3",
+      "summary": "Admin panel features for manual deposits/credits: create credit entry, approve/track deposits, and record wallet transactions for audit",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-7",
+      "summary": "Define and enforce admin authorization in the backend for deposit approval and manual wallet crediting actions.",
+      "reqIds": [
+        "REQ-4"
+      ],
+      "status": "pending"
+    }
+  ],
+  "gameProjectType": "none",
+  "projectName": "RigRewards",
+  "clarification_mode": "instant",
+  "clarification_rounds": 0
+}

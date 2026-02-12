@@ -1,0 +1,18 @@
+{
+  "frontend/src/App.tsx": "Main application component with TanStack Router setup, authentication gating, profile setup dialog integration, and route definitions for wallet, transactions, store, and admin pages.",
+  "frontend/src/hooks/useQueries.ts": "React Query hooks for all backend operations including user profiles, wallet balance, deposit requests, transactions, and admin functions with proper error handling, cache invalidation, and correct use of useInternetIdentity for principal access.",
+  "frontend/src/components/LoginButton.tsx": "Internet Identity login/logout button component with loading states and query cache clearing on logout.",
+  "frontend/src/components/AccessDeniedScreen.tsx": "Reusable access denied screen for unauthorized admin route access with navigation back to wallet.",
+  "frontend/src/components/layout/AppShell.tsx": "Responsive app shell with header, navigation, mobile menu, role-aware admin links, and footer with caffeine.ai attribution.",
+  "frontend/src/features/auth/components/ProfileSetupDialog.tsx": "First-login name capture dialog that prevents modal flash by checking profile fetch state before showing.",
+  "frontend/src/features/wallet/components/DepositRequestForm.tsx": "Form component for users to create deposit requests with amount input and validation.",
+  "frontend/src/features/wallet/components/DepositRequestsTable.tsx": "Table displaying user's deposit requests with status badges and formatted timestamps, using enum comparison for DepositStatus.",
+  "frontend/src/features/wallet/components/WalletBalanceCard.tsx": "Card component displaying the user's current available wallet balance.",
+  "frontend/src/features/admin/components/DepositApprovalDialog.tsx": "Admin dialog for reviewing and approving deposit requests with user and amount details.",
+  "frontend/src/pages/WalletPage.tsx": "Main wallet page combining balance card, deposit request form, and deposit requests table with navigation to transactions.",
+  "frontend/src/pages/TransactionsPage.tsx": "Transaction history page displaying all user transactions with type icons, amounts, and status badges, using enum comparison for TransactionType.",
+  "frontend/src/pages/StorePage.tsx": "Store page placeholder showing current balance and coming soon message for rig packages.",
+  "frontend/src/pages/admin/AdminDepositsPage.tsx": "Admin dashboard with tabbed interface for pending, approved, and rejected deposit requests with approval workflow, using enum comparison for DepositStatus filtering.",
+  "frontend/src/index.css": "Global styles with OKLCH color system using a purple-accent theme for light and dark modes with proper contrast ratios.",
+  "frontend/tailwind.config.js": "Tailwind configuration with custom color tokens, Inter font family, and extended theme for RigRewards design system."
+}

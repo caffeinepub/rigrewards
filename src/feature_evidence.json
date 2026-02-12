@@ -1,0 +1,110 @@
+{
+  "kind": "feature_evidence_report",
+  "features": [
+    {
+      "featureId": "feature-implement-an-off-app-bank-payment-deposit-flow-where-users-pay-the-admin-outside-the-app-and-then-request-record-a-deposit-inside-the-app-for-admin-review",
+      "featureTitle": "Implement an off-app bank payment deposit flow where users pay the admin outside the app and then request/record a deposit inside the app for admin review.",
+      "files": [
+        "frontend/src/features/wallet/components/DepositRequestForm.tsx",
+        "frontend/src/features/wallet/components/DepositRequestsTable.tsx"
+      ],
+      "components": [
+        "authorization@4.0.0",
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-1"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-add-an-admin-panel-workflow-to-confirm-bank-deposits-and-credit-user-wallets-by-a-manually-entered-amount-with-an-auditable-transaction-trail",
+      "featureTitle": "Add an admin panel workflow to confirm bank deposits and credit user wallets by a manually entered amount, with an auditable transaction trail.",
+      "files": [
+        "frontend/src/features/admin/components/DepositApprovalDialog.tsx",
+        "frontend/src/pages/admin/AdminDepositsPage.tsx"
+      ],
+      "components": [
+        "authorization@4.0.0",
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-2"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-update-rig-package-purchasing-to-use-internal-wallet-credits-available-balance-as-the-payment-method",
+      "featureTitle": "Update rig/package purchasing to use internal wallet credits (available balance) as the payment method.",
+      "files": [
+        "frontend/src/pages/StorePage.tsx"
+      ],
+      "components": [
+        "authorization@4.0.0",
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-3"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-add-user-facing-pages-components-for-viewing-wallet-balance-deposit-request-status-and-transaction-history-and-admin-facing-pages-components-for-deposit-review-and-approval",
+      "featureTitle": "Add user-facing pages/components for viewing wallet balance, deposit request status, and transaction history, and admin-facing pages/components for deposit review and approval.",
+      "files": [
+        "frontend/src/App.tsx",
+        "frontend/src/components/AccessDeniedScreen.tsx",
+        "frontend/src/components/LoginButton.tsx",
+        "frontend/src/components/layout/AppShell.tsx",
+        "frontend/src/features/auth/components/ProfileSetupDialog.tsx",
+        "frontend/src/pages/TransactionsPage.tsx",
+        "frontend/src/pages/WalletPage.tsx"
+      ],
+      "components": [
+        "authorization@4.0.0",
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-5"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-apply-a-coherent-distinct-visual-theme-for-the-rigrewards-ui-colors-typography-layout-and-enforce-it-consistently-across-user-and-admin-areas",
+      "featureTitle": "Apply a coherent, distinct visual theme for the RigRewards UI (colors, typography, layout) and enforce it consistently across user and admin areas.",
+      "files": [
+        "frontend/src/components/layout/AppShell.tsx",
+        "frontend/src/index.css",
+        "frontend/tailwind.config.js"
+      ],
+      "components": [
+        "authorization@4.0.0",
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-6"
+      ],
+      "confidence": "high"
+    }
+  ]
+}

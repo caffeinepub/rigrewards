@@ -1,0 +1,125 @@
+{
+  "kind": "spec_vs_diff_report",
+  "version": "1.0",
+  "generatedAt": "2026-02-12T09:40:03.954Z",
+  "summary": "The diff adds a Motoko backend with deposit request storage, wallets, transactions scaffolding, and new frontend pages for wallet, transactions, and an admin deposits queue. However, key requirements are incomplete: deposit requests lack reference/notes and per-user retrieval, admin approval lacks credited-amount input and rejection workflow with audit linkage, rig/package purchasing via wallet is not implemented, and the visual theme appears purple/blue-heavy. The diff also introduces an admin-secret-token initialization flow that was not requested and touches paths marked immutable in the constraints.",
+  "missing_requirements": [
+    {
+      "id": "REQ-1",
+      "requirement": "Deposit request must include optional payment reference/notes and be retrievable by the requesting user (own requests) as well as by admins (all requests), with pending->approved/rejected lifecycle and no direct user balance increases.",
+      "reason": "Backend createDepositRequest only accepts amount and DepositRequest type has no reference/notes. Frontend explicitly notes lack of backend support for user-specific deposit requests and returns an empty list for non-admins, so users cannot reliably retrieve their own requests. Admin approval/rejection methods are not shown in the truncated backend, so the full lifecycle cannot be verified.",
+      "evidence": [
+        "backend/main.mo",
+        "frontend/src/hooks/useQueries.ts (\"Backend currently only has getDepositRequests() for admins\" and returns [] on non-admin)"
+      ]
+    },
+    {
+      "id": "REQ-2",
+      "requirement": "Admin workflow to review pending deposits, approve with a manually entered credited amount (may differ from requested), or reject with optional admin note, and create an auditable Transaction record linking to the deposit request.",
+      "reason": "The approval dialog shows no input for a credited amount or an admin note, and there is no rejection action/UI in the provided dialog/table snippet. The backend Transaction type also does not include required audit fields (admin principal and explicit link to deposit request) as described, and transaction types do not include a deposit_credit type.",
+      "evidence": [
+        "frontend/src/features/admin/components/DepositApprovalDialog.tsx (no credited amount input; no admin note; only approve action)",
+        "frontend/src/pages/admin/AdminDepositsPage.tsx (UI focuses on approve; rejection not evidenced in truncated snippet)",
+        "backend/main.mo (Transaction fields: id, amount, from, to, status, transactionType, timestamp; TransactionType only #deposit/#internalTransfer/#purchase)"
+      ]
+    },
+    {
+      "id": "REQ-3",
+      "requirement": "Rig/package purchasing must use internal wallet credits: check sufficient balance, deduct on purchase, create purchase transaction, reject insufficient balance with clear English error, and reflect updated balance and history.",
+      "reason": "No purchase API or balance-deduction logic is evidenced in the backend snippet, and the Store page is explicitly \"Coming Soon\" with no purchasing flow.",
+      "evidence": [
+        "frontend/src/pages/StorePage.tsx (\"Coming Soon\"; no purchase interaction)",
+        "backend/main.mo (no purchase method shown in provided portion)"
+      ]
+    },
+    {
+      "id": "REQ-4",
+      "requirement": "Admin authorization must be enforced in backend for approval/rejection/credit actions, with admin list/config stored in canister state and an initial default admin configurable.",
+      "reason": "While an access control mixin is present, the diff does not provide evidence of an on-chain stored admin list/config initialization or explicit admin-only approval/rejection/credit methods. The frontend uses a secret-token initialization path rather than demonstrating admin principals stored/configured in canister state.",
+      "evidence": [
+        "backend/main.mo (includes authorization mixin but truncated before admin config/approval methods)",
+        "frontend/src/hooks/useActor.ts (calls actor._initializeAccessControlWithSecret(adminToken))"
+      ]
+    },
+    {
+      "id": "REQ-5",
+      "requirement": "Admin UI must include deposits queue filtering by status and an approval dialog where admin enters credited amount and optional note; user UI must include deposit form with optional reference/notes, deposit status list, and transactions list; all responsive/mobile-first.",
+      "reason": "Filtering by status exists via tabs, and user balance/deposit list/transactions page exist, but the approval dialog lacks credited amount and optional note input. The user deposit request form lacks any reference/notes field.",
+      "evidence": [
+        "frontend/src/pages/admin/AdminDepositsPage.tsx (Tabs used for status categories)",
+        "frontend/src/features/admin/components/DepositApprovalDialog.tsx (no credited amount/admin note inputs)",
+        "frontend/src/features/wallet/components/DepositRequestForm.tsx (only amount input)"
+      ]
+    },
+    {
+      "id": "REQ-6",
+      "requirement": "Apply a coherent distinct theme and avoid a default blue/purple-heavy palette; ensure mobile-first layouts for key screens.",
+      "reason": "The theme defines primary/ring hues around 265, which is a purple/blue hue, conflicting with the request to avoid a blue/purple-heavy palette.",
+      "evidence": [
+        "frontend/src/index.css (--primary: 0.45 0.18 265; --ring: 0.45 0.18 265; dark theme also uses 265)"
+      ]
+    }
+  ],
+  "hallucinated_features": [
+    {
+      "description": "Admin secret-token based access control initialization via URL parameter (caffeineAdminToken) and an actor method _initializeAccessControlWithSecret.",
+      "reason": "The BuildRequest calls for admin authorization based on authorized admin principals stored in canister state; it does not request a secret token passed via URL/session or a special initialization method.",
+      "evidence": [
+        "frontend/src/hooks/useActor.ts (getSecretParameter('caffeineAdminToken'); calls actor._initializeAccessControlWithSecret(adminToken))"
+      ]
+    },
+    {
+      "description": "User profile setup flow requiring a name before using the app (ProfileSetupDialog, userProfiles storage).",
+      "reason": "The BuildRequest is about wallet deposits, admin approval, transactions, and purchasing; it does not request profile management or mandatory name collection.",
+      "evidence": [
+        "backend/main.mo (UserProfile type; saveCallerUserProfile/getCallerUserProfile)",
+        "frontend/src/features/auth/components/ProfileSetupDialog.tsx",
+        "frontend/src/App.tsx (shows ProfileSetupDialog when userProfile is null)"
+      ]
+    },
+    {
+      "description": "Internal transfer transaction type and extended transaction statuses (autoCompleted, autoCompletedRejected) not mentioned in requirements.",
+      "reason": "Requirements only specify deposit credits and rig purchases with an audit trail; internal transfer and extra statuses were not requested.",
+      "evidence": [
+        "backend/main.mo (TransactionType includes #internalTransfer; TransactionStatus includes #autoCompleted and #autoCompletedRejected)"
+      ]
+    },
+    {
+      "description": "Changes/additions under frontend immutable paths (useActor.ts, useInternetIdentity.ts) despite constraint to not edit those paths.",
+      "reason": "Constraints explicitly say not to edit these paths; the diff includes these files being added/changed in the delivered set.",
+      "evidence": [
+        "frontend/src/hooks/useActor.ts",
+        "frontend/src/hooks/useInternetIdentity.ts"
+      ]
+    }
+  ],
+  "confidence": 0.72,
+  "changed_files": [
+    "all_files_summary.json",
+    "backend/main.mo",
+    "frontend-file-summaries.txt",
+    "frontend/index.css",
+    "frontend/index.html",
+    "frontend/src/App.tsx",
+    "frontend/src/components/AccessDeniedScreen.tsx",
+    "frontend/src/components/LoginButton.tsx",
+    "frontend/src/components/layout/AppShell.tsx",
+    "frontend/src/features/admin/components/DepositApprovalDialog.tsx",
+    "frontend/src/features/auth/components/ProfileSetupDialog.tsx",
+    "frontend/src/features/wallet/components/DepositRequestForm.tsx",
+    "frontend/src/features/wallet/components/DepositRequestsTable.tsx",
+    "frontend/src/features/wallet/components/WalletBalanceCard.tsx",
+    "frontend/src/hooks/useActor.ts",
+    "frontend/src/hooks/useInternetIdentity.ts",
+    "frontend/src/hooks/useQueries.ts",
+    "frontend/src/index.css",
+    "frontend/src/main.tsx",
+    "frontend/src/pages/StorePage.tsx",
+    "frontend/src/pages/TransactionsPage.tsx",
+    "frontend/src/pages/WalletPage.tsx",
+    "frontend/src/pages/admin/AdminDepositsPage.tsx",
+    "frontend/src/utils/urlParams.ts",
+    "frontend/tailwind.config.js",
+    "project_state.json"
+  ]
+}

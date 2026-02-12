@@ -1,0 +1,182 @@
+{
+  "kind": "implementation_plan",
+  "version": "1.0",
+  "title": "Offline deposit requests with admin approval, wallet balance, and wallet-based purchases (frontend-only)",
+  "requirements": [
+    {
+      "id": "REQ-1",
+      "summary": "Add user UI to create and review offline bank-transfer deposit requests (pending/approved/rejected) backed by authenticated canister calls.",
+      "acceptanceCriteria": [
+        "User can create a deposit request containing at minimum: amount requested, optional payment reference/notes, and timestamp.",
+        "Deposit requests are stored in the backend canister and are retrievable by the user (own requests) and by admins (all requests).",
+        "Deposit request has a status lifecycle: pending -> approved or rejected.",
+        "User cannot directly increase their balance; balance changes only occur via admin approval/credit actions."
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/backend.d.ts",
+          "operation": "modify",
+          "description": "Update the TypeScript canister interface typings as needed to support the deposit-request UX (e.g., optional reference/notes, and any returned timestamps/status fields) while keeping Internet Identity-based authenticated calls."
+        },
+        {
+          "path": "frontend/src/features/wallet/hooks/useWalletQueries.ts",
+          "operation": "create",
+          "description": "Create React Query hooks for wallet/deposit data (e.g., balance, current user's deposit requests) using the existing actor from useActor; ensure queries are enabled only when the actor is available. Verify the component's usage instructions before implementing."
+        },
+        {
+          "path": "frontend/src/features/wallet/hooks/useDepositMutations.ts",
+          "operation": "create",
+          "description": "Create React Query mutations for creating deposit requests (amount + optional reference/notes), with cache invalidation for wallet balance, deposit requests, and transactions after success; handle authorization-trap errors with user-friendly English messages. Verify the component's usage instructions before implementing."
+        },
+        {
+          "path": "frontend/src/features/wallet/components/DepositRequestForm.tsx",
+          "operation": "create",
+          "description": "Implement a mobile-first deposit request form (amount, optional reference/notes) using shadcn-ui form inputs and validation messaging; submit via the deposit mutation and show success/error states in English. Verify the component's usage instructions before implementing."
+        },
+        {
+          "path": "frontend/src/features/wallet/components/DepositRequestsTable.tsx",
+          "operation": "create",
+          "description": "Implement a responsive list/table of the current user's deposit requests showing amount, created time, and status (pending/approved/rejected), with clear empty/loading states. Verify the component's usage instructions before implementing."
+        }
+      ]
+    },
+    {
+      "id": "REQ-2",
+      "summary": "Add admin deposits queue UI with approve/reject workflow including manually entered credited amount and an auditable transaction view.",
+      "acceptanceCriteria": [
+        "Admin can view a list of pending deposit requests and inspect details (user, requested amount, reference/notes, created time).",
+        "Admin can approve a deposit request and input the credited amount (may differ from requested amount).",
+        "On approval, the user wallet available balance increases by the credited amount.",
+        "On rejection, no wallet balance changes occur and the request is marked rejected with an optional admin note/reason.",
+        "Every admin credit creates a Transaction record that includes: type (e.g., deposit_credit), user, amount, admin principal, timestamp, and a link to the deposit request (or request id)."
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/backend.d.ts",
+          "operation": "modify",
+          "description": "Adjust the TypeScript canister interface typings to match the admin approval/rejection flows required by the UI (e.g., approve with credited amount + optional note, reject with reason) so the frontend can compile and call the updated backend capability."
+        },
+        {
+          "path": "frontend/src/features/admin/hooks/useAdminDeposits.ts",
+          "operation": "create",
+          "description": "Create React Query hooks for admin-only deposit queue retrieval (including filtering by status) and admin actions (approve/reject), using the actor and handling authorization errors gracefully. Verify the component's usage instructions before implementing."
+        },
+        {
+          "path": "frontend/src/features/admin/components/DepositApprovalDialog.tsx",
+          "operation": "create",
+          "description": "Create an approval/rejection dialog using shadcn-ui Dialog, allowing admin to enter credited amount (required on approve) and optional note/reason; trigger the corresponding admin mutation and show clear English confirmation/error. Verify the component's usage instructions before implementing."
+        },
+        {
+          "path": "frontend/src/pages/admin/AdminDepositsPage.tsx",
+          "operation": "create",
+          "description": "Create an admin deposits queue page with a responsive list/table, status filter (e.g., pending/approved/rejected), row detail view, and an action to open the approval dialog; show Access Denied UI for non-admins. Verify the component's usage instructions before implementing."
+        }
+      ]
+    },
+    {
+      "id": "REQ-3",
+      "summary": "Update rig/package purchasing UI to use wallet credits, show insufficient balance errors, and refresh wallet + transaction history after purchase.",
+      "acceptanceCriteria": [
+        "When a user purchases a rig/package, the backend checks the user wallet available balance is sufficient.",
+        "On successful purchase, the purchase amount is deducted from available balance and a Transaction record is created (type: rig_purchase or similar).",
+        "If balance is insufficient, the purchase is rejected with a clear user-facing error message in English.",
+        "User can see updated wallet balance and transaction history after purchase."
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/backend.d.ts",
+          "operation": "modify",
+          "description": "Update the TypeScript canister interface typings to reflect the wallet-based purchase capability (and any error surfaces) so the purchase UI can call it and display insufficient-funds errors in English."
+        },
+        {
+          "path": "frontend/src/features/store/hooks/useWalletPurchase.ts",
+          "operation": "create",
+          "description": "Create a React Query mutation hook that performs a rig/package purchase using wallet credits via the actor, surfaces insufficient-funds errors as user-friendly English messages, and invalidates/refetches balance and transaction queries on success. Verify the component's usage instructions before implementing."
+        },
+        {
+          "path": "frontend/src/features/store/components/PurchaseWithWalletButton.tsx",
+          "operation": "create",
+          "description": "Create a shadcn-ui Button-based purchase component that shows the price, disables while processing, and invokes the wallet purchase mutation; display error messages inline and ensure mobile-first sizing. Verify the component's usage instructions before implementing."
+        },
+        {
+          "path": "frontend/src/pages/StorePage.tsx",
+          "operation": "create",
+          "description": "Create or consolidate a rig/package browsing/purchasing page that uses the wallet purchase button as the payment method and shows the current wallet balance + a link to transaction history; ensure the page is wired into navigation/routing. Verify the component's usage instructions before implementing."
+        }
+      ]
+    },
+    {
+      "id": "REQ-5",
+      "summary": "Provide user wallet pages (balance, deposit request form/status, transactions) and admin deposit review/approval pages, with responsive UI and English copy.",
+      "acceptanceCriteria": [
+        "User UI includes: current available balance, a form to create a deposit request, and a table/list of deposit requests with status.",
+        "User UI includes: a transactions list showing deposits and purchases with amounts and timestamps.",
+        "Admin UI includes: a deposits queue with filtering by status and an approval dialog where admin enters credited amount and optional note.",
+        "All user-facing text is in English and the UI is mobile-first and responsive."
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/App.tsx",
+          "operation": "create",
+          "description": "Implement top-level app routing and navigation wiring for required pages (Wallet, Transactions, Store, Admin Deposits), and enforce login gating using Internet Identity (do not show application data to guests). Verify the component's usage instructions before implementing."
+        },
+        {
+          "path": "frontend/src/components/layout/AppShell.tsx",
+          "operation": "create",
+          "description": "Create a responsive app shell (header/nav + content container) used across user/admin areas; include a Login/Logout control and role-aware navigation items (admin links only visible for admins). Verify the component's usage instructions before implementing."
+        },
+        {
+          "path": "frontend/src/components/LoginButton.tsx",
+          "operation": "create",
+          "description": "Add a Login/Logout button built on the existing useInternetIdentity hook and TanStack Query cache clearing on logout; ensure English labels and disabled states. Verify the component's usage instructions before implementing."
+        },
+        {
+          "path": "frontend/src/components/AccessDeniedScreen.tsx",
+          "operation": "create",
+          "description": "Create a reusable Access Denied screen for unauthorized admin route access and authorization-trap scenarios; keep all copy in English and mobile-friendly. Verify the component's usage instructions before implementing."
+        },
+        {
+          "path": "frontend/src/features/auth/components/ProfileSetupDialog.tsx",
+          "operation": "create",
+          "description": "Implement first-login name capture using getCallerUserProfile/saveCallerUserProfile with a shadcn-ui Dialog to avoid showing principal IDs; prevent modal flash by following the authorization component guidance for query-enabled state. Verify the component's usage instructions before implementing."
+        },
+        {
+          "path": "frontend/src/pages/WalletPage.tsx",
+          "operation": "create",
+          "description": "Create the main user wallet page combining: available balance, deposit request form, deposit requests list, and a transactions preview/link; ensure mobile-first layout and English text. Verify the component's usage instructions before implementing."
+        },
+        {
+          "path": "frontend/src/pages/TransactionsPage.tsx",
+          "operation": "create",
+          "description": "Create a transactions page that lists the user's transaction history (deposits/credits/purchases) with amount, type, and timestamp, and provides clear empty/loading states. Verify the component's usage instructions before implementing."
+        }
+      ]
+    },
+    {
+      "id": "REQ-6",
+      "summary": "Apply a consistent RigRewards visual theme (non blue/purple-heavy) across user and admin areas with responsive, mobile-first layouts.",
+      "acceptanceCriteria": [
+        "A single theme direction is implemented consistently across pages (navigation, cards, tables, dialogs, forms).",
+        "Theme avoids a default blue/purple-heavy palette unless explicitly required later.",
+        "Mobile-first layouts are implemented for key screens (wallet/deposits and admin deposits queue)."
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/index.css",
+          "operation": "create",
+          "description": "Define global theme tokens (CSS variables used by Tailwind/shadcn-ui), base typography, and consistent spacing rules for RigRewards; choose a distinct palette that avoids default blue/purple emphasis and applies to navigation, cards, tables, dialogs, and forms."
+        },
+        {
+          "path": "frontend/tailwind.config.js",
+          "operation": "modify",
+          "description": "Align Tailwind theme usage with the RigRewards design direction (colors/typography/layout) by ensuring the configured CSS-variable-based palette supports the chosen theme across components; keep changes compatible with shadcn-ui tokens."
+        },
+        {
+          "path": "frontend/src/components/layout/AppShell.tsx",
+          "operation": "modify",
+          "description": "Apply the theme consistently in the shared layout (header, navigation, containers) using Tailwind utility classes and shadcn-ui components; ensure mobile-first navigation behavior and responsive spacing. Verify the component's usage instructions before implementing."
+        }
+      ]
+    }
+  ]
+}
